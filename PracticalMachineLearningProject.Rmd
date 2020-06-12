@@ -13,6 +13,9 @@ The following was run on:
 **`r R.Version()$platform`**  
 **`r R.Version()$version.string`**
 
+# Data Information
+The data used for this project comes from <http://groupware.les.inf.puc-rio.br/har>, and contains information from accelerometers that are used to classify motion/activity types of the participants.
+
 # Reading & Cleaning the Data
 Import the data straight from the website. The data was downloaded: **`r format(Sys.time(),'%B %d, %Y %H:%M:%S')`**
 
