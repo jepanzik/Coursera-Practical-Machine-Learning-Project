@@ -1,9 +1,13 @@
 ---
-title: "Coursera Practical Machine Learning Project"
-author: "J.E. Panzik"
-date: "6/12/2020"
-output: html_document
+output: pdf_document
+geometry: margin=0.75in
+fontsize: 11pt
 ---
+
+# Predicting Types of Activities from Body Accelerometers
+
+## J.E. Panzik \hfill `r format(Sys.time(), '%B %d, %Y')`
+
 # System Details
 The following was run on:  
 **`r R.Version()$platform`**  
@@ -81,13 +85,13 @@ gbm_acc <- confusionMatrix(test$classe, gbm_predict)$overall['Accuracy']*100
 ```
 
 ## Random Forest Model
-The random forest model fit the subset of training data used as a test with **`r rf_acc`%** accuracy.
+The random forest model fit the subset of training data used as a test with **`r rf_acc`%** accuracy, and an estimated out of sample error of **`r 100-rf_acc`%**.
 
 The predicted vs actual activities are shown in the table below.
 `r kable(table(test$classe, rf_predict))`
 
 ## Gradiant Boosting Method Model
-The gradiant boosting method fit the subset of training data used as a test with **`r gbm_acc`%** accuracy.
+The gradiant boosting method fit the subset of training data used as a test with **`r gbm_acc`%** accuracy, and an estimated out of sample error of **`r 100-gbm_acc`%**.
 
 The predicted vs actual activities are shown in the table below.
 `r kable(table(test$classe, gbm_predict))`
