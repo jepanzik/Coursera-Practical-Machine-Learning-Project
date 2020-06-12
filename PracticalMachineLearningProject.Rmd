@@ -4,4 +4,101 @@ author: "J.E. Panzik"
 date: "6/12/2020"
 output: html_document
 ---
+# System Details
+The following was run on:  
+**`r R.Version()$platform`**  
+**`r R.Version()$version.string`**
 
+# Reading & Cleaning the Data
+Import the data straight from the website. The data was downloaded: **`r format(Sys.time(),'%B %d, %Y %H:%M:%S')`**
+
+Data is imported setting both NA and blanks as NA values since both exist in the imported data.
+
+```{r readData, cache=TRUE}
+trainRaw <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", na.strings = c("NA" , "" ))
+validRaw <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv", na.strings = c("NA" , "" ))
+```
+
+```{r dataExplore}
+dim(trainRaw)
+str(trainRaw)
+NA_perc <- 100*sum(is.na(trainRaw))/(dim(trainRaw)[1]*dim(trainRaw)[2])
+```
+
+The training data has **`r dim(trainRaw)[1]`** rows and **`r dim(trainRaw)[2]`** columns, for a total of **`r dim(trainRaw)[1]*dim(trainRaw)[2]`** data entries. Of these entries, **`r sum(is.na(trainRaw))` (`r NA_perc`%)** are NA values.
+
+
+The investigate if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.
+
+```{r dataExplore2}
+colnames(trainRaw[, colSums(is.na(trainRaw))/dim(trainRaw)[1] >=0.97])
+colnames(trainRaw[, colSums(is.na(trainRaw))/dim(trainRaw)[1] >=0.98])
+```
+
+The missing data is concentrated in 100 columns of the data and show that they are missing 97-98% of the data. These columns are removed from the training set and test set. The first 7 columns are also removed because they do not contribute anything to determining what type of activity is being performed. The $classe column is already a factor variable and does not need to be converted. The imported validation/test data has an additional column of problem_id at the end which will be removed.
+
+```{r dataClean}
+include <- which(colSums(is.na(trainRaw))<0.95*dim(trainRaw)[1])
+trainClean <- trainRaw[,include]
+trainClean <- trainClean[,-c(1:7)]
+
+validClean <- validRaw[,include]
+validClean <- validClean[, -c(1:7)]
+validClean <- validClean[, -dim(validClean)[2]]
+```
+
+# Create Training Models
+
+The training data will be fit using 2 model types and compare the relative accuracy of each:  
+-**Random Forest (rf)**  
+-**Gradiant Boosting Method (gbm)**  
+
+The training set is broken up into a training and initial test set.
+
+```{r train, cache=TRUE}
+set.seed(2425)
+library(caret)
+inTrain <- createDataPartition(trainClean$classe, p=0.70, list=FALSE)
+train <- trainClean[inTrain, ]
+test <- trainClean[-inTrain, ]
+
+cv <- trainControl(method="cv", 5)
+rf <- train(classe~., data=train, method="rf", trControl=cv, verbose=FALSE, ntree=250)
+
+gbm <- train(classe~., data=train, method="gbm", trControl=cv, verbose=FALSE)
+```
+
+
+# Testing Models
+
+```{r predict}
+library(caret); library(knitr)
+rf_predict <- predict(rf, newdata=test)
+rf_acc <- confusionMatrix(test$classe, rf_predict)$overall['Accuracy']*100
+
+gbm_predict <- predict(gbm, newdata=test)
+gbm_acc <- confusionMatrix(test$classe, gbm_predict)$overall['Accuracy']*100
+```
+
+## Random Forest Model
+The random forest model fit the subset of training data used as a test with **`r rf_acc`%** accuracy.
+
+The predicted vs actual activities are shown in the table below.
+`r kable(table(test$classe, rf_predict))`
+
+## Gradiant Boosting Method Model
+The gradiant boosting method fit the subset of training data used as a test with **`r gbm_acc`%** accuracy.
+
+The predicted vs actual activities are shown in the table below.
+`r kable(table(test$classe, gbm_predict))`
+
+## Model Conclusions
+The comparison between the two model methods shows that the random forest has the the highest accuracy, with very few misclassifications. The gradiant boosting method still has >95% accuracy, but the misclassifications are widely spread out. The random forest will be used as a more robust method of classifying activitiy types.
+
+# Applying the Random Forest Model to the Provided Test Data
+The results from the random forest model will be applied to the provided test data that was labelled as validation data. This will sort the data into activity types.
+
+```{r classify}
+valid_predict <- predict(rf, newdata=validClean)
+valid_predict
+```
