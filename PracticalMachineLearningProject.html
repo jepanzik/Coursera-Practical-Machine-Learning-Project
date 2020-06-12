@@ -381,7 +381,7 @@ summary {
 </div>
 <div id="reading-cleaning-the-data" class="section level1">
 <h1>Reading &amp; Cleaning the Data</h1>
-<p>Import the data straight from the website. The data was downloaded: <strong>June 12, 2020 18:04:55</strong></p>
+<p>Import the data straight from the website. The data was downloaded: <strong>June 12, 2020 18:15:46</strong></p>
 <p>Data is imported setting both NA and blanks as NA values since both exist in the imported data.</p>
 <pre class="r"><code>trainRaw &lt;- read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;, na.strings = c(&quot;NA&quot; , &quot;&quot; ))
 validRaw &lt;- read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv&quot;, na.strings = c(&quot;NA&quot; , &quot;&quot; ))</code></pre>
@@ -491,7 +491,7 @@ validRaw &lt;- read.csv(&quot;https://d396qusza40orc.cloudfront.net/predmachlear
 ##   [list output truncated]</code></pre>
 <pre class="r"><code>NA_perc &lt;- 100*sum(is.na(trainRaw))/(dim(trainRaw)[1]*dim(trainRaw)[2])</code></pre>
 <p>The training data has <strong>19622</strong> rows and <strong>160</strong> columns, for a total of <strong>3139520</strong> data entries. Of these entries, <strong>1921600 (61.2068087%)</strong> are NA values.</p>
-<p>The investigate if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.</p>
+<p>The investigation if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.</p>
 <pre class="r"><code>colnames(trainRaw[, colSums(is.na(trainRaw))/dim(trainRaw)[1] &gt;=0.97])</code></pre>
 <pre><code>##   [1] &quot;kurtosis_roll_belt&quot;       &quot;kurtosis_picth_belt&quot;     
 ##   [3] &quot;kurtosis_yaw_belt&quot;        &quot;skewness_roll_belt&quot;      
@@ -573,15 +573,17 @@ gbm &lt;- train(classe~., data=train, method=&quot;gbm&quot;, trControl=cv, verb
 </div>
 <div id="testing-models" class="section level1">
 <h1>Testing Models</h1>
-<pre class="r"><code>library(caret); library(knitr)
-rf_predict &lt;- predict(rf, newdata=test)
+<pre class="r"><code>library(caret); library(knitr)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
+<pre class="r"><code>rf_predict &lt;- predict(rf, newdata=test)
 rf_acc &lt;- confusionMatrix(test$classe, rf_predict)$overall['Accuracy']*100
 
 gbm_predict &lt;- predict(gbm, newdata=test)
 gbm_acc &lt;- confusionMatrix(test$classe, gbm_predict)$overall['Accuracy']*100</code></pre>
 <div id="random-forest-model" class="section level2">
 <h2>Random Forest Model</h2>
-<p>The random forest model fit the subset of training data used as a test with <strong>99.2863212%</strong> accuracy, and an estimated out of sample error of <strong>0.7136788%</strong>.</p>
+<p>The random forest model fit the subset of training data used as a test with <strong>99.3033135%</strong> accuracy, and an estimated out of sample error of <strong>0.6966865%</strong>.</p>
 <p>The predicted vs actual activities are shown in the table below.</p>
 <table>
 <thead>
@@ -623,8 +625,8 @@ gbm_acc &lt;- confusionMatrix(test$classe, gbm_predict)$overall['Accuracy']*100<
 <td>D</td>
 <td align="right">0</td>
 <td align="right">0</td>
-<td align="right">25</td>
-<td align="right">938</td>
+<td align="right">24</td>
+<td align="right">939</td>
 <td align="right">1</td>
 </tr>
 <tr class="odd">

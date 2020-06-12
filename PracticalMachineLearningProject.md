@@ -16,7 +16,7 @@ The following was run on:
 The data used for this project comes from <http://groupware.les.inf.puc-rio.br/har>, and contains information from accelerometers that are used to classify motion/activity types of the participants.
 
 # Reading & Cleaning the Data
-Import the data straight from the website. The data was downloaded: **June 12, 2020 18:04:55**
+Import the data straight from the website. The data was downloaded: **June 12, 2020 18:15:46**
 
 Data is imported setting both NA and blanks as NA values since both exist in the imported data.
 
@@ -150,7 +150,7 @@ NA_perc <- 100*sum(is.na(trainRaw))/(dim(trainRaw)[1]*dim(trainRaw)[2])
 The training data has **19622** rows and **160** columns, for a total of **3139520** data entries. Of these entries, **1921600 (61.2068087%)** are NA values.
 
 
-The investigate if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.
+The investigation if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.
 
 
 ```r
@@ -259,6 +259,17 @@ gbm <- train(classe~., data=train, method="gbm", trControl=cv, verbose=FALSE)
 
 ```r
 library(caret); library(knitr)
+```
+
+```
+## Loading required package: lattice
+```
+
+```
+## Loading required package: ggplot2
+```
+
+```r
 rf_predict <- predict(rf, newdata=test)
 rf_acc <- confusionMatrix(test$classe, rf_predict)$overall['Accuracy']*100
 
@@ -267,7 +278,7 @@ gbm_acc <- confusionMatrix(test$classe, gbm_predict)$overall['Accuracy']*100
 ```
 
 ## Random Forest Model
-The random forest model fit the subset of training data used as a test with **99.2863212%** accuracy, and an estimated out of sample error of **0.7136788%**.
+The random forest model fit the subset of training data used as a test with **99.3033135%** accuracy, and an estimated out of sample error of **0.6966865%**.
 
 The predicted vs actual activities are shown in the table below.
 
@@ -277,7 +288,7 @@ The predicted vs actual activities are shown in the table below.
 A     1672      1      0     0      1
 B        6   1133      0     0      0
 C        0      7   1019     0      0
-D        0      0     25   938      1
+D        0      0     24   939      1
 E        0      0      0     1   1081
 
 

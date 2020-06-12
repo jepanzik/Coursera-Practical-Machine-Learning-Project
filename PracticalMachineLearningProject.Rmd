@@ -34,7 +34,7 @@ NA_perc <- 100*sum(is.na(trainRaw))/(dim(trainRaw)[1]*dim(trainRaw)[2])
 The training data has **`r dim(trainRaw)[1]`** rows and **`r dim(trainRaw)[2]`** columns, for a total of **`r dim(trainRaw)[1]*dim(trainRaw)[2]`** data entries. Of these entries, **`r sum(is.na(trainRaw))` (`r NA_perc`%)** are NA values.
 
 
-The investigate if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.
+The investigation if missing data is related to specific activity types ($classe) shows that all activity types appear to have the same proportion of NA values.
 
 ```{r dataExplore2}
 colnames(trainRaw[, colSums(is.na(trainRaw))/dim(trainRaw)[1] >=0.97])
