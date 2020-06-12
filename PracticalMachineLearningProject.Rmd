@@ -1,12 +1,11 @@
 ---
-output: pdf_document
-geometry: margin=0.75in
-fontsize: 11pt
+title: "Predicting Types of Activities from Body Accelerometers"
+author: "J.E. Panzik"
+date: "6/12/2020"
+output: 
+      html_document:
+            keep_md: yes
 ---
-
-# Predicting Types of Activities from Body Accelerometers
-
-## J.E. Panzik \hfill `r format(Sys.time(), '%B %d, %Y')`
 
 # System Details
 The following was run on:  
